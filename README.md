@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
+## Development quickstart
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) to view the site. The primary UI lives in `components/HomePage.tsx`; global styles are in `styles/globals.css`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+npm run start
+```
 
-## Learn More
+`npm run start` serves the production build locally on port 3000.
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The site is ready for Vercel. To publish at **adm3313.noureldin.dev**:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. In the project root, run `vercel link` and point to the `adm3313` Vercel project (or create one with `vercel`).
+2. Deploy with `vercel --prod` (or push to the linked Git branch if CI is enabled). Vercel will run `npm install`, `npm run lint`, and `npm run build` automatically.
+3. In the Vercel dashboard, open **Settings → Domains** for the project and add `adm3313.noureldin.dev`.
+4. Update the DNS for `noureldin.dev` so the `adm3313` subdomain is a CNAME pointing to `cname.vercel-dns.com` (or follow Vercel’s DNS instructions if the domain is already managed there).
+5. After DNS propagates, verify the certificate issuance under **Settings → Domains** and trigger a redeploy if needed.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The repository includes a legacy `/pages/index.js` file that re-exports the App Router homepage, satisfying hosting environments that expect the Pages Router entry point.

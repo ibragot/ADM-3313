@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 const navLinks = [
@@ -30,7 +31,10 @@ const mentorProfiles = [
 		focusAreas: ["Product strategy", "Design research"],
 		meetingStyle: "Weekly 30-minute sprints",
 		studentsHelped: 42,
-		highlights: ["Map job stories that resonate with hiring managers.", "Use roadmap trade-offs to tell impact-focused stories."],
+		highlights: [
+			"Map job stories that resonate with hiring managers.",
+			"Use roadmap trade-offs to tell impact-focused stories.",
+		],
 		availability: ["Tue · 10:00 AM PT", "Thu · 3:30 PM PT"],
 	},
 	{
@@ -42,7 +46,10 @@ const mentorProfiles = [
 		focusAreas: ["Marketing launch", "Data storytelling"],
 		meetingStyle: "Bi-weekly strategy reviews",
 		studentsHelped: 35,
-		highlights: ["Build launch scorecards recruiters can validate.", "Translate campaign metrics into clear impact narratives."],
+		highlights: [
+			"Build launch scorecards recruiters can validate.",
+			"Translate campaign metrics into clear impact narratives.",
+		],
 		availability: ["Wed · 1:00 PM PT", "Fri · 9:00 AM PT"],
 	},
 	{
@@ -54,7 +61,10 @@ const mentorProfiles = [
 		focusAreas: ["Data storytelling", "Product strategy"],
 		meetingStyle: "Project-based checkpoints",
 		studentsHelped: 28,
-		highlights: ["Practice whiteboard analyses with constructive critique.", "Ship artefacts that reflect measurable product impact."],
+		highlights: [
+			"Practice whiteboard analyses with constructive critique.",
+			"Ship artefacts that reflect measurable product impact.",
+		],
 		availability: ["Mon · 4:30 PM PT", "Thu · 8:30 AM PT"],
 	},
 	{
@@ -66,7 +76,10 @@ const mentorProfiles = [
 		focusAreas: ["Design research", "Product strategy"],
 		meetingStyle: "Immersive research studios",
 		studentsHelped: 31,
-		highlights: ["Draft interview guides and synthesize insights live.", "Connect research outcomes to product and growth metrics."],
+		highlights: [
+			"Draft interview guides and synthesize insights live.",
+			"Connect research outcomes to product and growth metrics.",
+		],
 		availability: ["Tue · 2:00 PM PT", "Fri · 11:30 AM PT"],
 	},
 ];
@@ -77,8 +90,20 @@ const interviewTracks = [
 		label: "Product management",
 		description: "Practice strategy and execution rounds with mentors who have hired APMs and PMs.",
 		slots: [
-			{ id: "product-slot-1", label: "Tue · 9:00 AM PT", interviewer: "Caleb Morgan", format: "Product sense", notes: "Case + roadmap critique" },
-			{ id: "product-slot-2", label: "Thu · 6:00 PM PT", interviewer: "Maya Desai", format: "Execution", notes: "Metric deep-dive" },
+			{
+				id: "product-slot-1",
+				label: "Tue · 9:00 AM PT",
+				interviewer: "Caleb Morgan",
+				format: "Product sense",
+				notes: "Case + roadmap critique",
+			},
+			{
+				id: "product-slot-2",
+				label: "Thu · 6:00 PM PT",
+				interviewer: "Maya Desai",
+				format: "Execution",
+				notes: "Metric deep-dive",
+			},
 		],
 		focus: ["Prioritization frameworks", "Product storytelling", "Stakeholder alignment"],
 	},
@@ -87,8 +112,20 @@ const interviewTracks = [
 		label: "Data & analytics",
 		description: "Simulate SQL, experiment design, and readout presentations with hiring managers.",
 		slots: [
-			{ id: "analytics-slot-1", label: "Wed · 3:00 PM PT", interviewer: "Nikhil Rao", format: "SQL + case", notes: "Live querying" },
-			{ id: "analytics-slot-2", label: "Sat · 10:00 AM PT", interviewer: "Priya Shah", format: "Experiment review", notes: "A/B interpretation" },
+			{
+				id: "analytics-slot-1",
+				label: "Wed · 3:00 PM PT",
+				interviewer: "Nikhil Rao",
+				format: "SQL + case",
+				notes: "Live querying",
+			},
+			{
+				id: "analytics-slot-2",
+				label: "Sat · 10:00 AM PT",
+				interviewer: "Priya Shah",
+				format: "Experiment review",
+				notes: "A/B interpretation",
+			},
 		],
 		focus: ["Experiment frameworks", "Insight presentation", "Cross-functional storytelling"],
 	},
@@ -97,8 +134,20 @@ const interviewTracks = [
 		label: "Marketing & GTM",
 		description: "Work through positioning, channel planning, and campaign retros with seasoned marketers.",
 		slots: [
-			{ id: "marketing-slot-1", label: "Mon · 5:30 PM PT", interviewer: "Alex Rivera", format: "Positioning", notes: "Narrative critique" },
-			{ id: "marketing-slot-2", label: "Thu · 8:00 AM PT", interviewer: "Fatima Noor", format: "Channel mix", notes: "Media plan review" },
+			{
+				id: "marketing-slot-1",
+				label: "Mon · 5:30 PM PT",
+				interviewer: "Alex Rivera",
+				format: "Positioning",
+				notes: "Narrative critique",
+			},
+			{
+				id: "marketing-slot-2",
+				label: "Thu · 8:00 AM PT",
+				interviewer: "Fatima Noor",
+				format: "Channel mix",
+				notes: "Media plan review",
+			},
 		],
 		focus: ["Audience definition", "Launch measurement", "Messaging iteration"],
 	},
@@ -206,7 +255,7 @@ const feedbackPrompts = [
 	},
 ];
 
-export default function Home() {
+export default function HomePage() {
 	const [showModal, setShowModal] = useState(false);
 	const [email, setEmail] = useState("");
 	const [submitted, setSubmitted] = useState(false);
@@ -223,12 +272,13 @@ export default function Home() {
 		return defaultMentor?.id ?? mentorProfiles[0].id;
 	});
 	const activeMentor = useMemo(() => {
-		const match = mentorProfiles.find((mentor) => mentor.id === selectedMentorId);
-		if (match) {
-			return match;
+		const directMatch = mentorProfiles.find((mentor) => mentor.id === selectedMentorId) ?? null;
+		if (directMatch && (filteredMentors.length === 0 || filteredMentors.some((mentor) => mentor.id === directMatch.id))) {
+			return directMatch;
 		}
-		return filteredMentors[0] ?? mentorProfiles[0];
+		return filteredMentors[0] ?? directMatch ?? mentorProfiles[0];
 	}, [filteredMentors, selectedMentorId]);
+	const highlightedMentorId = activeMentor?.id ?? selectedMentorId;
 	const [selectedTrack, setSelectedTrack] = useState<string>(interviewTracks[0].id);
 	const activeTrack = useMemo(
 		() => interviewTracks.find((track) => track.id === selectedTrack) ?? interviewTracks[0],
@@ -248,22 +298,22 @@ export default function Home() {
 		setMobileOpen(false);
 	};
 
-	useEffect(() => {
-		if (filteredMentors.length === 0) {
-			if (!mentorProfiles.some((mentor) => mentor.id === selectedMentorId)) {
-				setSelectedMentorId(mentorProfiles[0].id);
-			}
-			return;
+	const handleInterestChange = (interest: string) => {
+		setSelectedInterest(interest);
+		const firstMatch = mentorProfiles.find((mentor) => mentor.focusAreas.includes(interest));
+		if (firstMatch && firstMatch.id !== selectedMentorId) {
+			setSelectedMentorId(firstMatch.id);
 		}
+	};
 
-		if (!filteredMentors.some((mentor) => mentor.id === selectedMentorId)) {
-			setSelectedMentorId(filteredMentors[0].id);
+	const handleTrackSelect = (trackId: string) => {
+		setSelectedTrack(trackId);
+		const nextTrack = interviewTracks.find((track) => track.id === trackId);
+		const defaultSlot = nextTrack?.slots[0]?.id ?? null;
+		if (defaultSlot !== selectedSlot) {
+			setSelectedSlot(defaultSlot);
 		}
-	}, [filteredMentors, selectedMentorId]);
-
-	useEffect(() => {
-		setSelectedSlot(activeTrack.slots[0]?.id ?? null);
-	}, [activeTrack]);
+	};
 
 	useEffect(() => {
 		if (typeof document === "undefined") {
@@ -355,9 +405,7 @@ export default function Home() {
 		return () => window.removeEventListener("keydown", handleKey);
 	}, [mobileOpen]);
 
-	const handleFeedbackChange = (
-		field: "name" | "email" | "segment" | "message"
-	) =>
+	const handleFeedbackChange = (field: "name" | "email" | "segment" | "message") =>
 		(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
 			setFeedbackForm((prev) => ({ ...prev, [field]: event.target.value }));
 		};
@@ -412,10 +460,10 @@ export default function Home() {
 			<header className="top-nav-wrapper">
 				<div className="page-shell">
 					<div className="top-nav">
-						<a href="/" className="brand">
+						<Link href="/" className="brand">
 							<span className="brand-mark">Career Prep Platform</span>
 							<span className="brand-sub">Career Launch Studio</span>
-						</a>
+						</Link>
 						<nav className="nav-links hidden md:flex">
 							{navLinks.map((link) => (
 								<a key={link.label} href={link.href} className="nav-link">
@@ -486,8 +534,7 @@ export default function Home() {
 								Mentorship, mock interviews, and real projects in one platform.
 							</h1>
 							<p className="hero-lead reveal" style={{ transitionDelay: "160ms" }}>
-								Career Prep Platform helps university students build confidence before graduation by pairing them with mentors, interview
-								practice, and project-based learning that fits their schedule — all beyond the limits of traditional campus career centers.
+								Career Prep Platform helps university students build confidence before graduation by pairing them with mentors, interview practice, and project-based learning that fits their schedule — all beyond the limits of traditional campus career centers.
 							</p>
 							<div className="hero-cta reveal" style={{ transitionDelay: "210ms" }}>
 								<button className="cta primary" type="button" onClick={handleJoinClick}>
@@ -568,7 +615,7 @@ export default function Home() {
 							Match with mentors, schedule mock interviews, and browse real project briefs — the core loops students will use once we go live.
 						</p>
 					</div>
-					<div className="functional-grid">
+					<div className="mentor-module__grid">
 						<article className="module-card reveal" style={{ transitionDelay: "110ms" }}>
 							<div className="module-card__header">
 								<span className="tag-pill">Mentor loop</span>
@@ -582,65 +629,66 @@ export default function Home() {
 											type="button"
 											key={interest}
 											className={`filter-chip ${selectedInterest === interest ? "active" : ""}`}
-											onClick={() => setSelectedInterest(interest)}
+											onClick={() => handleInterestChange(interest)}
 										>
 											{interest}
 										</button>
 									))}
 								</div>
-								<div className="mentor-module__grid">
-									<div className="mentor-list">
-										{filteredMentors.map((mentor) => (
-											<button
-												type="button"
-												key={mentor.id}
-												className={`mentor-card ${mentor.id === selectedMentorId ? "active" : ""}`}
-												onClick={() => setSelectedMentorId(mentor.id)}
-											>
-												<span className="mentor-initials" aria-hidden>
-													{mentor.initials}
-												</span>
-												<div>
-													<strong>{mentor.name}</strong>
-													<span>{mentor.title}</span>
-													<small>{mentor.meetingStyle}</small>
-												</div>
-											</button>
-										))}
-										{filteredMentors.length === 0 && <p className="empty-state">We’re onboarding mentors in this area — leave your request below.</p>}
-									</div>
-									{activeMentor && (
-										<div className="mentor-detail">
-											<h4>{activeMentor.name}</h4>
-											<p className="mentor-title">{activeMentor.title}</p>
-											<p>{activeMentor.summary}</p>
-											<ul className="mentor-meta">
-												<li>
-													<strong>Meeting style</strong>
-													<span>{activeMentor.meetingStyle}</span>
-												</li>
-												<li>
-													<strong>Students coached</strong>
-													<span>{activeMentor.studentsHelped}</span>
-												</li>
-												<li>
-													<strong>Availability</strong>
-													<span>{activeMentor.availability.join(" · ")}</span>
-												</li>
-											</ul>
-											<ul className="mentor-highlights">
-												{activeMentor.highlights.map((highlight) => (
-													<li key={highlight}>{highlight}</li>
-												))}
-											</ul>
-											<button type="button" className="cta secondary" onClick={handleJoinClick}>
-												Request this mentor
-											</button>
-										</div>
+								<div className="mentor-list">
+									{filteredMentors.map((mentor) => (
+										<button
+											type="button"
+											key={mentor.id}
+											className={`mentor-card ${mentor.id === highlightedMentorId ? "active" : ""}`}
+											onClick={() => setSelectedMentorId(mentor.id)}
+										>
+											<span className="mentor-initials" aria-hidden>
+												{mentor.initials}
+											</span>
+											<div>
+												<strong>{mentor.name}</strong>
+												<span>{mentor.title}</span>
+												<small>{mentor.meetingStyle}</small>
+											</div>
+										</button>
+									))}
+									{filteredMentors.length === 0 && (
+										<p className="empty-state">We’re onboarding mentors in this area — leave your request below.</p>
 									)}
 								</div>
+								{activeMentor && (
+									<div className="mentor-detail">
+										<h4>{activeMentor.name}</h4>
+										<p className="mentor-title">{activeMentor.title}</p>
+										<p>{activeMentor.summary}</p>
+										<ul className="mentor-meta">
+											<li>
+												<strong>Meeting style</strong>
+												<span>{activeMentor.meetingStyle}</span>
+											</li>
+											<li>
+												<strong>Students coached</strong>
+												<span>{activeMentor.studentsHelped}</span>
+											</li>
+											<li>
+												<strong>Availability</strong>
+												<span>{activeMentor.availability.join(" · ")}</span>
+											</li>
+										</ul>
+										<ul className="mentor-highlights">
+											{activeMentor.highlights.map((highlight) => (
+												<li key={highlight}>{highlight}</li>
+											))}
+										</ul>
+										<button type="button" className="cta secondary" onClick={handleJoinClick}>
+											Request this mentor
+										</button>
+									</div>
+								)}
 							</div>
 						</article>
+
 						<article className="module-card reveal" style={{ transitionDelay: "180ms" }}>
 							<div className="module-card__header">
 								<span className="tag-pill">Mock interviews</span>
@@ -654,7 +702,7 @@ export default function Home() {
 											type="button"
 											key={track.id}
 											className={`filter-chip ${selectedTrack === track.id ? "active" : ""}`}
-											onClick={() => setSelectedTrack(track.id)}
+											onClick={() => handleTrackSelect(track.id)}
 										>
 											{track.label}
 										</button>
@@ -697,6 +745,7 @@ export default function Home() {
 								</div>
 							</div>
 						</article>
+
 						<article className="module-card reveal" style={{ transitionDelay: "250ms" }}>
 							<div className="module-card__header">
 								<span className="tag-pill">Project labs</span>
@@ -704,52 +753,50 @@ export default function Home() {
 								<p>Preview the employer-backed briefs in rotation and the milestones that prove job-ready skills.</p>
 							</div>
 							<div className="module-card__body project-module">
-								<div className="project-layout">
-									<div className="brief-list">
-										{projectBriefs.map((brief) => (
-											<button
-												type="button"
-												key={brief.id}
-												className={`brief-item ${selectedBriefId === brief.id ? "active" : ""}`}
-												onClick={() => setSelectedBriefId(brief.id)}
-											>
-												<strong>{brief.title}</strong>
-												<span>{brief.sponsor}</span>
-												<small>
-													{brief.duration} · {brief.teamSize}
-												</small>
-											</button>
-										))}
-									</div>
-									{activeBrief && (
-										<div className="brief-detail">
-											<span className="brief-sponsor">{activeBrief.sponsor}</span>
-											<h4>{activeBrief.title}</h4>
-											<p>{activeBrief.summary}</p>
-											<div className="brief-meta">
-												<div>
-													<strong>Milestones</strong>
-													<ol>
-														{activeBrief.milestones.map((milestone) => (
-															<li key={milestone}>{milestone}</li>
-														))}
-													</ol>
-												</div>
-												<div>
-													<strong>Deliverables</strong>
-													<div className="tag-row">
-														{activeBrief.deliverables.map((item) => (
-															<span key={item}>{item}</span>
-														))}
-													</div>
+								<div className="brief-list">
+									{projectBriefs.map((brief) => (
+										<button
+											type="button"
+											key={brief.id}
+											className={`brief-item ${selectedBriefId === brief.id ? "active" : ""}`}
+											onClick={() => setSelectedBriefId(brief.id)}
+										>
+											<strong>{brief.title}</strong>
+											<span>{brief.sponsor}</span>
+											<small>
+												{brief.duration} · {brief.teamSize}
+											</small>
+										</button>
+									))}
+								</div>
+								{activeBrief && (
+									<div className="brief-detail">
+										<span className="brief-sponsor">{activeBrief.sponsor}</span>
+										<h4>{activeBrief.title}</h4>
+										<p>{activeBrief.summary}</p>
+										<div className="brief-meta">
+											<div>
+												<strong>Milestones</strong>
+												<ol>
+													{activeBrief.milestones.map((milestone) => (
+														<li key={milestone}>{milestone}</li>
+													))}
+												</ol>
+											</div>
+											<div>
+												<strong>Deliverables</strong>
+												<div className="tag-row">
+													{activeBrief.deliverables.map((item) => (
+														<span key={item}>{item}</span>
+													))}
 												</div>
 											</div>
-											<button type="button" className="cta secondary" onClick={handleJoinClick}>
-												Partner on this brief
-											</button>
 										</div>
-									)}
-								</div>
+										<button type="button" className="cta secondary" onClick={handleJoinClick}>
+											Partner on this brief
+										</button>
+									</div>
+								)}
 							</div>
 						</article>
 					</div>
@@ -839,7 +886,9 @@ export default function Home() {
 							<button type="submit" className="cta primary" disabled={feedbackStatus === "sending"}>
 								{feedbackStatus === "sending" ? "Sending..." : "Submit feedback"}
 							</button>
-							{feedbackStatus === "sent" && <p className="feedback-success">Thanks for helping shape Career Prep Platform! We’ll reply soon.</p>}
+							{feedbackStatus === "sent" && (
+								<p className="feedback-success">Thanks for helping shape Career Prep Platform! We’ll reply soon.</p>
+							)}
 						</form>
 					</div>
 				</section>
@@ -871,7 +920,7 @@ export default function Home() {
 								<li key={point}>{point}</li>
 							))}
 						</ul>
-				</article>
+					</article>
 				</section>
 
 				<section className="page-shell section-spacing" id="contact">
@@ -908,7 +957,9 @@ export default function Home() {
 					))}
 					<a href="mailto:hello@careerprepplatform.com">Email</a>
 				</div>
-				<p className="footer-meta">© {new Date().getFullYear()} Career Prep Platform Collective. Crafted in partnership with mentors worldwide.</p>
+				<p className="footer-meta">
+					© {new Date().getFullYear()} Career Prep Platform Collective. Crafted in partnership with mentors worldwide.
+				</p>
 			</footer>
 
 			{showModal && (
